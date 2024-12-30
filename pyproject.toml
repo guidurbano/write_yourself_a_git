@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "guit"
+version = "0.1.0"
+description = "Guit is a CLI tool like Git"
+authors = ["Guilherme Urbano <guilhermedurbano@gmail.com>"]
+license = "BeerWare"
+readme = "README.md"
+packages = [{include = "guit"}]
+classifiers = [
+    "Topic :: Education",
+    "Environment :: Console",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.12",
+]
+
+[tool.poetry.scripts]
+guit = "guit.cli:app"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+typer = "^0.15.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

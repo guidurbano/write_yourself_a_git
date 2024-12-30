@@ -1,4 +1,0 @@
-import libwyag
-
-if __name__ == '__main__':
-    libwyag.main()

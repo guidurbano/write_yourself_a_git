@@ -10,6 +10,15 @@ The entire application is based on a `wyag` command.
 
 ## How to use it
 
+A very simplified version of Git core commands was implemented.
+
+To create a new Git repository:
+``` bash
+wyag init [path]
+```
+
+# TODO: explain use of poetry and cli
+
 ## Contribution
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
