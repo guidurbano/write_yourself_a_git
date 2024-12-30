@@ -1,5 +1,6 @@
-import os
 import configparser
+import os
+
 
 class GitRepository:
     """
@@ -30,5 +31,5 @@ class GitRepository:
 
         if not force:
             vers = int(self.conf.get("core", "repositoryformatversion"))
-            if vers != 0: # only default repository format 0
+            if vers != 0:  # only default repository format 0
                 raise Exception(f"Unsupported repositoryformatversion {vers}")

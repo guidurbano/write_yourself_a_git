@@ -1,5 +1,7 @@
 import os
+
 from guit.repository import GitRepository
+
 
 def repo_path(repo, *path):
     """Compute path under repo's gitdir."""

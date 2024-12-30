@@ -1,7 +1,9 @@
-import os
 import configparser
+import os
+
 from guit.repository import GitRepository
 from guit.utils import repo_dir, repo_file
+
 
 def repo_create(path: str) -> GitRepository:
     """
@@ -27,7 +29,8 @@ def repo_create(path: str) -> GitRepository:
 
     if os.path.exists(repo.worktree):
         if not os.path.isdir(repo.worktree) or (
-            os.path.exists(repo.gitdir) and os.listdir(repo.gitdir)):
+            os.path.exists(repo.gitdir) and os.listdir(repo.gitdir)
+        ):
             raise Exception(f"{path} is not a valid or empty directory!")
     else:
         os.makedirs(repo.worktree)
@@ -35,6 +38,7 @@ def repo_create(path: str) -> GitRepository:
     create_git_structure(repo)
 
     return repo
+
 
 def create_git_structure(repo: GitRepository):
     """
