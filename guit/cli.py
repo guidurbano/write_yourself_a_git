@@ -30,9 +30,7 @@ def default(ctx: Context):
 
 @app.command()
 def init(
-    path: str = Argument(
-        default=".", metavar="directory", help="Path of repository."
-    )
+    path: str = Argument(default=".", metavar="directory", help="Path of repository.")
 ):
     """
     Initiate a new Git repository
@@ -44,14 +42,9 @@ def init(
 @app.command()
 def cat_file(
     type: str = Argument(
-        default="blob",
-        metavar="type",
-        help="Specify the object type"
+        default="blob", metavar="type", help="Specify the object type"
     ),
-    object: str = Argument(
-        metavar="object",
-        help="The object to display"
-    )
+    object: str = Argument(metavar="object", help="The object to display"),
 ):
     """
     Provide content of repository objects.
@@ -63,19 +56,11 @@ def cat_file(
 
 @app.command()
 def hash_object(
-    t: str = Option(
-        default="blob",
-        metavar="type",
-        help="Specify the object type"
-    ),
+    t: str = Option(default="blob", metavar="type", help="Specify the object type"),
     w: str = Option(
-        default=False,
-        is_flag=True,
-        help="Actually write the object into the database"
+        default=False, is_flag=True, help="Actually write the object into the database"
     ),
-    path: str = Argument(
-        help="Read object from <file>"
-    )
+    path: str = Argument(help="Read object from <file>"),
 ):
     """
     Provide content of repository objects.

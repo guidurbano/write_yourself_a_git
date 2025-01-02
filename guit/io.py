@@ -5,6 +5,7 @@ import hashlib
 from guit.utils import repo_file, repo_find, object_find
 from guit.classes import GitRepository, GitObject, GitBlob
 
+
 def object_read(repo: GitRepository, sha: str) -> GitObject:
     """Read object sha from Git repository repo.
     There are four object types: blob, commit, tag, tree
@@ -24,31 +25,34 @@ def object_read(repo: GitRepository, sha: str) -> GitObject:
     if not os.path.isfile(path):
         return None
 
-    with open(path, "rb") as f: # read file as binary
+    with open(path, "rb") as f:  # read file as binary
         raw = zlib.decompress(f.read())
 
         # Read object type
-        x = raw.find(b' ')
+        x = raw.find(b" ")
         fmt = raw[0:x]
 
         # Read and validate object size
-        y = raw.find(b'\x00', x)
+        y = raw.find(b"\x00", x)
         size = int(raw[x:y].decode("ascii"))
-        if size != len(raw)-y-1:
+        if size != len(raw) - y - 1:
             raise Exception(f"Malformed object {sha}: bad length")
 
         # Pick constructor for that object format
         match fmt:
-            case b'commit' : c=GitCommit
-            case b'tree'   : c=GitTree
-            case b'tag'    : c=GitTag
-            case b'blob'   : c=GitBlob
+            case b"commit":
+                c = GitCommit
+            case b"tree":
+                c = GitTree
+            case b"tag":
+                c = GitTag
+            case b"blob":
+                c = GitBlob
             case _:
-                raise Exception(
-                    f"Unknown type {fmt.decode("ascii")} for object {sha}")
+                raise Exception(f"Unknown type {fmt.decode("ascii")} for object {sha}")
 
         # Call constructor and return object
-        return c(raw[y+1:])
+        return c(raw[y + 1 :])
 
 
 def object_write(obj: GitObject, repo=None):
@@ -64,16 +68,16 @@ def object_write(obj: GitObject, repo=None):
     # Add header
     ## Exact storage format is:
     ## header + space + size in bytes + null byte + contents
-    result = obj.fmt + b' ' + str(len(data)).encode() + b'\x00' + data
+    result = obj.fmt + b" " + str(len(data)).encode() + b"\x00" + data
     # Compute hash
     sha = hashlib.sha1(result).hexdigest()
 
     if repo:
         # Compute path
-        path=repo_file(repo, "objects", sha[0:2], sha[2:], mkdir=True)
+        path = repo_file(repo, "objects", sha[0:2], sha[2:], mkdir=True)
 
         if not os.path.exists(path):
-            with open(path, 'wb') as f:
+            with open(path, "wb") as f:
                 # Compress and write
                 f.write(zlib.compress(result))
     return sha
@@ -111,11 +115,16 @@ def object_hash(type: str, write: bool, path: str):
 
     # Choose constructor according to fmt argument
     match fmt:
-        case b'commit' : obj=GitCommit(data)
-        case b'tree'   : obj=GitTree(data)
-        case b'tag'    : obj=GitTag(data)
-        case b'blob'   : obj=GitBlob(data)
-        case _: raise Exception(f"Unknown type {fmt}.")
+        case b"commit":
+            obj = GitCommit(data)
+        case b"tree":
+            obj = GitTree(data)
+        case b"tag":
+            obj = GitTag(data)
+        case b"blob":
+            obj = GitBlob(data)
+        case _:
+            raise Exception(f"Unknown type {fmt}.")
 
     sha = object_write(obj, repo)
     print(sha)

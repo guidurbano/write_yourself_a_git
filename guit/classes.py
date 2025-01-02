@@ -35,7 +35,7 @@ class GitRepository:
                 raise Exception(f"Unsupported repositoryformatversion {vers}")
 
 
-class GitObject():
+class GitObject:
     """
     Represents a Git object.
     Either loads the object from the provided data or create a new empty
@@ -64,7 +64,7 @@ class GitObject():
         raise Exception("Unimplemented!")
 
     def init(self):
-        pass # Just do nothing. This is a reasonable default!
+        pass  # Just do nothing. This is a reasonable default!
 
 
 class GitBlob(GitObject):
@@ -72,7 +72,8 @@ class GitBlob(GitObject):
     Basic blob object
     This is the type of object of every file in git.
     """
-    fmt=b'blob'
+
+    fmt = b"blob"
 
     def serialize(self):
         return self.blobdata
