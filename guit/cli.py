@@ -1,7 +1,7 @@
 import argparse
 import collections
 import configparser
-import hashlib
+
 import os
 import re
 import sys
@@ -12,9 +12,11 @@ from datetime import datetime
 from fnmatch import fnmatch
 from math import ceil
 
-from typer import Argument, Context, Typer
+from typer import Argument, Context, Typer, Option
 
 from guit.create import repo_create
+from guit.io import cat_file as _cat_file
+from guit.io import object_hash
 
 app = Typer(invoke_without_command=True)
 
@@ -29,7 +31,7 @@ def default(ctx: Context):
 @app.command()
 def init(
     path: str = Argument(
-        default=".", metavar="directory", help="Initialize a new, empty repository."
+        default=".", metavar="directory", help="Path of repository."
     )
 ):
     """
@@ -37,3 +39,47 @@ def init(
     """
 
     repo_create(path)
+
+
+@app.command()
+def cat_file(
+    type: str = Argument(
+        default="blob",
+        metavar="type",
+        help="Specify the object type"
+    ),
+    object: str = Argument(
+        metavar="object",
+        help="The object to display"
+    )
+):
+    """
+    Provide content of repository objects.
+    """
+    if type not in ["blob", "commit", "tag", "tree"]:
+        raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
+    _cat_file(type, object)
+
+
+@app.command()
+def hash_object(
+    t: str = Option(
+        default="blob",
+        metavar="type",
+        help="Specify the object type"
+    ),
+    w: str = Option(
+        default=False,
+        is_flag=True,
+        help="Actually write the object into the database"
+    ),
+    path: str = Argument(
+        help="Read object from <file>"
+    )
+):
+    """
+    Provide content of repository objects.
+    """
+    if t not in ["blob", "commit", "tag", "tree"]:
+        raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
+    object_hash(t, w, path)

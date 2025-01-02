@@ -1,11 +1,6 @@
 import os
 
-from guit.repository import GitRepository
-
-
-def repo_path(repo, *path):
-    """Compute path under repo's gitdir."""
-    return os.path.join(repo.gitdir, *path)
+from guit.classes import GitRepository
 
 
 def repo_file(repo: GitRepository, *path: str, mkdir: bool = False) -> str:
@@ -54,3 +49,44 @@ def repo_dir(repo: GitRepository, *path: str, mkdir: bool = False) -> str:
         return dir_path
 
     return None
+
+
+def repo_find(path: str = ".", required: bool = True) -> GitRepository | None:
+    """
+    Recursive search for a `.git` directory starting from the given path
+    and traversing upward.
+
+    Parameters:
+        path (str): Starting directory for the search. Defaults is current.
+        required (bool): To raise exception if not found.
+
+    Returns:
+        GitRepository: The repository object if found.
+        None: If no `.git` directory is found and `required` is False.
+    """
+    # Normalize the path to an absolute path
+    path = os.path.realpath(path)
+
+    # Check if the `.git` directory exists at this level
+    if os.path.isdir(os.path.join(path, ".git")):
+        return GitRepository(path)
+
+    # Move to the parent directory
+    parent = os.path.realpath(os.path.join(path, ".."))
+
+    # If we've reached the root directory, handle the base case
+    if parent == path:
+        if required:
+            raise Exception("No .git directory found in any parent directory.")
+        return None
+
+    # Recursively search in the parent directory
+    return repo_find(parent, required)
+
+
+def object_find(repo, name, fmt=None, follow=True):
+    """
+    Object find.
+    Placeholder for now.
+    """
+    return name

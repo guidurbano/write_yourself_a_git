@@ -1,7 +1,7 @@
 import configparser
 import os
 
-from guit.repository import GitRepository
+from guit.classes import GitRepository
 from guit.utils import repo_dir, repo_file
 
 
