@@ -1,4 +1,5 @@
 import configparser
+from guit.parser import kvlm_parse, kvlm_serialize
 import os
 
 
@@ -80,3 +81,20 @@ class GitBlob(GitObject):
 
     def deserialize(self, data):
         self.blobdata = data
+
+
+class GitCommit(GitObject):
+    """
+    Commit object.
+    """
+
+    fmt = b"commit"
+
+    def deserialize(self, data):
+        self.kvlm = kvlm_parse(data)
+
+    def serialize(self):
+        return kvlm_serialize(self.kvlm)
+
+    def init(self):
+        self.kvlm = dict()

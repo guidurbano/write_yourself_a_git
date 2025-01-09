@@ -19,6 +19,7 @@ guit = "guit.cli:app"
 [tool.poetry.dependencies]
 python = "^3.12"
 typer = "^0.15.1"
+graphviz = "^0.20.3"
 
 
 [tool.poetry.group.dev.dependencies]

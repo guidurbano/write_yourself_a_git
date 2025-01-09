@@ -3,7 +3,7 @@ import sys
 import zlib
 import hashlib
 from guit.utils import repo_file, repo_find, object_find
-from guit.classes import GitRepository, GitObject, GitBlob
+from guit.classes import GitRepository, GitObject, GitBlob, GitCommit
 
 
 def object_read(repo: GitRepository, sha: str) -> GitObject:
@@ -128,3 +128,49 @@ def object_hash(type: str, write: bool, path: str):
 
     sha = object_write(obj, repo)
     print(sha)
+
+
+def log_commit(commit: str):
+    """
+    Log that display history of a commit.
+
+    Parameters:
+        commit (str): commit sha-1 hash
+    """
+    repo = repo_find()
+    print("digraph wyaglog{")
+    print("  node[shape=rect]")
+    log_graphviz(repo, object_find(repo, commit), set())
+    print("}")
+
+
+def log_graphviz(repo, sha, seen):
+
+    if sha in seen:
+        return
+    seen.add(sha)
+
+    commit = object_read(repo, sha)
+    message = commit.kvlm[None].decode("utf8").strip()
+    message = message.replace("\\", "\\\\")
+    message = message.replace('"', '\\"')
+
+    if "\n" in message:  # Keep only the first line
+        message = message[: message.index("\n")]
+
+    print(f'  c_{sha} [label="{sha[0:7]}: {message}"]')
+    assert commit.fmt == b"commit"
+
+    if not b"parent" in commit.kvlm.keys():
+        # Base case: the initial commit.
+        return
+
+    parents = commit.kvlm[b"parent"]
+
+    if type(parents) != list:
+        parents = [parents]
+
+    for p in parents:
+        p = p.decode("ascii")
+        print(f"  c_{sha} -> c_{p};")
+        log_graphviz(repo, p, seen)

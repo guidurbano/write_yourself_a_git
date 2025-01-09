@@ -17,6 +17,7 @@ from typer import Argument, Context, Typer, Option
 from guit.create import repo_create
 from guit.io import cat_file as _cat_file
 from guit.io import object_hash
+from guit.io import log_commit
 
 app = Typer(invoke_without_command=True)
 
@@ -68,3 +69,11 @@ def hash_object(
     if t not in ["blob", "commit", "tag", "tree"]:
         raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
     object_hash(t, w, path)
+
+
+@app.command()
+def log(commit: str = Argument(default="HEAD", help="Commit to start at.")):
+    """
+    Display history of a given commit.
+    """
+    log_commit(commit)
