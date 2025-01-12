@@ -3,7 +3,7 @@ import os
 import sys
 import zlib
 
-from guit.classes import GitBlob, GitCommit, GitObject, GitRepository
+from guit.classes import GitBlob, GitCommit, GitObject, GitRepository, GitTree
 from guit.utils import object_find, repo_file, repo_find
 
 
@@ -96,7 +96,7 @@ def cat_file(type: str, object: str):
     sys.stdout.buffer.write(obj.serialize())
 
 
-def object_hash(type: str, write: bool, path: str):
+def hash_object(type: str, write: bool, path: str):
     """
     Hash object, writing it to repo if provided.
     Parameters:
@@ -182,3 +182,82 @@ def log_mermaid(repo, sha, seen):
         parent_sha = parent.decode("ascii")
         print(f"  c_{sha} --> c_{parent_sha}")
         log_mermaid(repo, parent_sha, seen)
+
+
+def ls_tree(tree, recursive, prefix=""):
+    """
+    List the contents of a tree object.
+
+    Parameters:
+        tree (str): tree object.
+        recursive (bool): Print the contests of a directory. Default if False.
+        prefix (str): path prefix for recursive listings.
+    """
+    repo = repo_find()
+    sha = object_find(repo, tree, fmt=b"tree")
+    obj = object_read(repo, sha)
+
+    for item in obj.items:
+        type = item.mode[:2] if len(item.mode) > 4 else item.mode[:1]
+        type_map = {b"04": "tree", b"10": "blob", b"12": "blob", b"16": "commit"}
+        type = type_map.get(type, None)
+
+        if not type:
+            raise Exception(f"Unknown tree leaf mode {item.mode}")
+
+        full_path = os.path.join(prefix, item.path)
+
+        if not (recursive and type == "tree"):
+            mode_str = item.mode.decode("ascii").rjust(6, "0")
+            print(f"{mode_str} {type} {item.sha}\t{full_path}")
+        else:
+            ls_tree(item.sha, recursive, full_path)
+
+
+def checkout(commit, path):
+    """
+    Checkout a commit inside of a directory.
+
+    Parameters:
+        commit (str): Commit hash or tree to checkout.
+        path (str): Directory where the commit should be checked out.
+    """
+    repo = repo_find()
+    obj = object_read(repo, object_find(repo, commit))
+
+    # If the object is a commit, we grab its tree
+    if obj.fmt == b"commit":
+        tree_sha = obj.kvlm[b"tree"].decode("ascii")
+        obj = object_read(repo, tree_sha)
+
+    # Ensure the target path is an empty directory
+    if os.path.exists(path):
+        if not os.path.isdir(path):
+            raise Exception(f"Path exists and is not a directory: {path}")
+        if os.listdir(path):
+            raise Exception(f"Directory is not empty: {path}")
+    else:
+        os.makedirs(path)
+
+    tree_checkout(repo, obj, os.path.realpath(path))
+
+
+def tree_checkout(repo, tree, path):
+    """
+    Recursively checkout a tree object.
+
+    Parameters:
+        repo: Repository instance.
+        tree: Tree object to checkout.
+        path (str): Directory path to populate with tree contents.
+    """
+    for item in tree.items:
+        dest = os.path.join(path, item.path)
+        obj = object_read(repo, item.sha)
+
+        if obj.fmt == b"tree":
+            os.makedirs(dest, exist_ok=True)
+            tree_checkout(repo, obj, dest)
+        elif obj.fmt == b"blob":
+            with open(dest, "wb") as f:
+                f.write(obj.blobdata)

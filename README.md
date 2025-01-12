@@ -95,6 +95,32 @@ code below in [Mermaid live-editor](https://mermaid.live/) to visualise it.
   c_740589fb4ad82835afbc5cbb28b141547ac844a6["740589f: refactor: ran isort"]
 ```
 
+### 4. List files in tree
+
+To display the files in a tree, you can use:
+
+```bash
+guit ls-tree a028f62a1c7180431f009ac758003a3ea89d88ff
+```
+
+```
+100644 blob fef8c18d83f302b03910cceed0962d9aec428394    classes.py
+100644 blob 01dc187f98b6fb1236b86014c4bf4b5d41c2f9ef    cli.py
+100644 blob 6c2e1c32a72cec30a8ad56582be59651f15c741d    create.py
+100644 blob f76a19d081b6702094c7b0f377c3afd5e5300900    io.py
+100644 blob bbdfbeb1b7cb277dbc756c3f145665e03ce4d6bc    utils.p
+```
+
+### 5. Checkout
+
+A very simple checkout method implemented to instantiates a commit in the
+worktree. It instantiate a tree in a directory ONLY if the directory is empty
+(that's ebcause git has several safeguards to avoid deleting data).
+
+```bash
+guit checkout d0abf88de4d39d2dbf9e6a586f921e405bb1f645 test
+```
+
 ## To know more
 
 ### Git-objects
@@ -175,6 +201,25 @@ All this hashed together in a unique SHA-1 identifier.
 
 Since commit is made out of it's parents, they are immutable and
 have the hole history
+
+#### what's in a tree?
+
+It’s an array of three-element tuples made of a file mode, a path (relative to the worktree) and a SHA-1. The format is given by:
+
+> [mode] + ' ' + [path] + b'\x00' + [sha-1]
+
+One example is:
+
+Mode  | SHA-1 | Path
+------------- | ------------- | -------------
+100644  | 894a44cc066a027465cd26d634948d56d13af9af | .gitignore
+100644  | 94a9ed024d3859793618152ea559a168bbcbb5e2 | LICENSE
+100644 | 894a44cc066a027465cd26d634948d56d13af9af | .gitignore
+100644 | 94a9ed024d3859793618152ea559a168bbcbb5e2 | LICENSE
+100644 | bab489c4f4600a38ce6dbfd652b90383a4aa3e45 | README.md
+100644 | 6d208e47659a2a10f5f8640e0155d9276a2130a9 | src
+040000 | e7445b03aea61ec801b20d6ab62f076208b7d097 | tests
+040000 | d5ec863f17f3a2e92aa8f6b66ac18f7b09fd1b38 | main.c
 
 ## Contribution
 

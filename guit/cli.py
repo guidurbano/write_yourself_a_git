@@ -1,19 +1,11 @@
-import collections
-import os
-import re
-import sys
-import zlib
-from datetime import datetime
-
-# import grp, pwd
-from fnmatch import fnmatch
-from math import ceil
-
 from typer import Argument, Context, Option, Typer
 
 from guit.create import repo_create
 from guit.io import cat_file as _cat_file
-from guit.io import log_commit, object_hash
+from guit.io import checkout as _checkout
+from guit.io import hash_object as _hash_object
+from guit.io import log_commit
+from guit.io import ls_tree as _ls_tree
 
 app = Typer(invoke_without_command=True)
 
@@ -64,7 +56,7 @@ def hash_object(
     """
     if t not in ["blob", "commit", "tag", "tree"]:
         raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
-    object_hash(t, w, path)
+    _hash_object(t, w, path)
 
 
 @app.command()
@@ -73,3 +65,25 @@ def log(commit: str = Argument(default="HEAD", help="Commit to start at.")):
     Display history of a given commit.
     """
     log_commit(commit)
+
+
+@app.command()
+def ls_tree(
+    tree: str = Argument(default="HEAD", help="A tree-ish object."),
+    r: str = Option(default=False, is_flag=True, help="Recurse into sub-trees"),
+):
+    """
+    List the contents of a tree object.
+    """
+    _ls_tree(tree, r)
+
+
+@app.command()
+def checkout(
+    commit: str = Argument(help="The commit or tree to checkout."),
+    path: str = Argument(help="The EMPTY directory to checkout on."),
+):
+    """
+    Checkout a commit inside of a directory
+    """
+    _checkout(commit, path)
