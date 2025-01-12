@@ -74,6 +74,27 @@ guit hash-file blob -w README.md
 
 The parameter `-w` is used to actually write the object into the git repository.
 
+### 3. Log command
+
+To display the history of a given commit, you can use:
+
+```bash
+guit log 3b2193d574be54e31f9c24a8e9478a2eeb307617
+```
+
+You will see a Mermaid-compatible directed graph, with nodes representing
+commits and edges showing parent-child relationships. You can paste the
+code below in [Mermaid live-editor](https://mermaid.live/) to visualise it.
+
+```mermaid
+  graph TD
+  c_3b2193d574be54e31f9c24a8e9478a2eeb307617["3b2193d: lint: black"]
+  c_3b2193d574be54e31f9c24a8e9478a2eeb307617 --> c_b91bee0ff2768ebb9a6ee26a2074f30b10440a19
+  c_b91bee0ff2768ebb9a6ee26a2074f30b10440a19["b91bee0: feat: cat-file and hash-file"]
+  c_b91bee0ff2768ebb9a6ee26a2074f30b10440a19 --> c_740589fb4ad82835afbc5cbb28b141547ac844a6
+  c_740589fb4ad82835afbc5cbb28b141547ac844a6["740589f: refactor: ran isort"]
+```
+
 ## To know more
 
 ### Git-objects

@@ -1,6 +1,7 @@
 import configparser
-from guit.parser import kvlm_parse, kvlm_serialize
 import os
+
+from guit.parser import kvlm_parse, kvlm_serialize
 
 
 class GitRepository:

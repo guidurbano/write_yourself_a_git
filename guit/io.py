@@ -1,9 +1,10 @@
+import hashlib
 import os
 import sys
 import zlib
-import hashlib
-from guit.utils import repo_file, repo_find, object_find
-from guit.classes import GitRepository, GitObject, GitBlob, GitCommit
+
+from guit.classes import GitBlob, GitCommit, GitObject, GitRepository
+from guit.utils import object_find, repo_file, repo_find
 
 
 def object_read(repo: GitRepository, sha: str) -> GitObject:
@@ -138,13 +139,21 @@ def log_commit(commit: str):
         commit (str): commit sha-1 hash
     """
     repo = repo_find()
-    print("digraph wyaglog{")
-    print("  node[shape=rect]")
-    log_graphviz(repo, object_find(repo, commit), set())
-    print("}")
+    print("```mermaid")
+    print("graph TD")
+    log_mermaid(repo, object_find(repo, commit), set())
+    print("```")
 
 
-def log_graphviz(repo, sha, seen):
+def log_mermaid(repo, sha, seen):
+    """
+    Recursively generate Mermaid graph nodes and edges for a commit.
+
+    Parameters:
+        repo (GitRepository): Repository object.
+        sha (str): SHA-1 hash of the commit.
+        seen (set): Set of already processed commits to avoid duplication.
+    """
 
     if sha in seen:
         return
@@ -152,25 +161,24 @@ def log_graphviz(repo, sha, seen):
 
     commit = object_read(repo, sha)
     message = commit.kvlm[None].decode("utf8").strip()
-    message = message.replace("\\", "\\\\")
-    message = message.replace('"', '\\"')
+    message = message.replace("\\", "\\\\").replace('"', '\\"')
 
-    if "\n" in message:  # Keep only the first line
-        message = message[: message.index("\n")]
+    # Display only the first line of the commit message
+    if "\n" in message:
+        message = message.split("\n")[0]
 
-    print(f'  c_{sha} [label="{sha[0:7]}: {message}"]')
+    print(f'  c_{sha}["{sha[:7]}: {message}"]')
     assert commit.fmt == b"commit"
 
-    if not b"parent" in commit.kvlm.keys():
-        # Base case: the initial commit.
+    # Base case: the initial commit
+    if b"parent" not in commit.kvlm:
         return
 
     parents = commit.kvlm[b"parent"]
-
-    if type(parents) != list:
+    if not isinstance(parents, list):
         parents = [parents]
 
-    for p in parents:
-        p = p.decode("ascii")
-        print(f"  c_{sha} -> c_{p};")
-        log_graphviz(repo, p, seen)
+    for parent in parents:
+        parent_sha = parent.decode("ascii")
+        print(f"  c_{sha} --> c_{parent_sha}")
+        log_mermaid(repo, parent_sha, seen)

@@ -1,7 +1,4 @@
-import argparse
 import collections
-import configparser
-
 import os
 import re
 import sys
@@ -12,12 +9,11 @@ from datetime import datetime
 from fnmatch import fnmatch
 from math import ceil
 
-from typer import Argument, Context, Typer, Option
+from typer import Argument, Context, Option, Typer
 
 from guit.create import repo_create
 from guit.io import cat_file as _cat_file
-from guit.io import object_hash
-from guit.io import log_commit
+from guit.io import log_commit, object_hash
 
 app = Typer(invoke_without_command=True)
 
