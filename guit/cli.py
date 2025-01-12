@@ -52,7 +52,7 @@ def hash_object(
     path: str = Argument(help="Read object from <file>"),
 ):
     """
-    Provide content of repository objects.
+    Hash an object.
     """
     if t not in ["blob", "commit", "tag", "tree"]:
         raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
