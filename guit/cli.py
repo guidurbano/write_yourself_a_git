@@ -1,11 +1,14 @@
 from typer import Argument, Context, Option, Typer
 
 from guit.create import repo_create
-from guit.io import cat_file as _cat_file
-from guit.io import checkout as _checkout
-from guit.io import hash_object as _hash_object
-from guit.io import log_commit
-from guit.io import ls_tree as _ls_tree
+from guit.io import (
+    cat_file as _cat_file,
+    checkout as _checkout,
+    hash_object as _hash_object,
+    log_commit,
+    ls_tree as _ls_tree
+)
+from guit.ref import show_ref as _show_ref
 
 app = Typer(invoke_without_command=True)
 
@@ -84,6 +87,18 @@ def checkout(
     path: str = Argument(help="The EMPTY directory to checkout on."),
 ):
     """
-    Checkout a commit inside of a directory
+    Checkout a commit inside of a directory.
     """
     _checkout(commit, path)
+
+
+@app.command()
+def show_ref(
+    with_hash: str = Option(
+        default=True, is_flag=True, help="Show hash."
+    ),
+):
+    """
+    List references.
+    """
+    _show_ref(with_hash=with_hash, prefix="refs")

@@ -84,7 +84,7 @@ guit log 3b2193d574be54e31f9c24a8e9478a2eeb307617
 
 You will see a Mermaid-compatible directed graph, with nodes representing
 commits and edges showing parent-child relationships. You can paste the
-code below in [Mermaid live-editor](https://mermaid.live/) to visualise it.
+code below in [Mermaid live-editor](https://mermaid.live/) to visualize it.
 
 ```mermaid
   graph TD
@@ -119,6 +119,22 @@ worktree. It instantiate a tree in a directory ONLY if the directory is empty
 
 ```bash
 guit checkout d0abf88de4d39d2dbf9e6a586f921e405bb1f645 test
+```
+
+### 6. Show references
+References are text files, in the `.git/refs` which holds  SHA-1
+identifier of an object, or a reference to another reference, ultimately
+to a SHA-1.
+
+To show all references use:
+
+```
+guit show-refs
+``
+
+```
+8c31299f8f1a53c4a02c1d88f6980731f308a005 refs/heads/main
+8c31299f8f1a53c4a02c1d88f6980731f308a005 refs/remotes/origin/main
 ```
 
 ## To know more
