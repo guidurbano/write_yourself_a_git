@@ -100,15 +100,15 @@ code below in [Mermaid live-editor](https://mermaid.live/) to visualize it.
 To display the files in a tree, you can use:
 
 ```bash
-guit ls-tree a028f62a1c7180431f009ac758003a3ea89d88ff
+guit ls-tree f478a2a96fcfd0c71231f126948d6608ca83591b
 ```
 
 ```
-100644 blob fef8c18d83f302b03910cceed0962d9aec428394    classes.py
-100644 blob 01dc187f98b6fb1236b86014c4bf4b5d41c2f9ef    cli.py
+100644 blob a8b41082206759a2a6564088573b329861a039ae    classes.py
+100644 blob d8c2e471a1f1eb92e5945fbb4edceda554d8d491    cli.py
 100644 blob 6c2e1c32a72cec30a8ad56582be59651f15c741d    create.py
-100644 blob f76a19d081b6702094c7b0f377c3afd5e5300900    io.py
-100644 blob bbdfbeb1b7cb277dbc756c3f145665e03ce4d6bc    utils.p
+100644 blob a1c191d4a251b5ddff07c3af545e5f18ef637874    io.py
+100644 blob bbdfbeb1b7cb277dbc756c3f145665e03ce4d6bc    utils.py
 ```
 
 ### 5. Checkout
@@ -130,7 +130,7 @@ To show all references use:
 
 ```
 guit show-refs
-``
+```
 
 ```
 8c31299f8f1a53c4a02c1d88f6980731f308a005 refs/heads/main
@@ -225,7 +225,7 @@ It’s an array of three-element tuples made of a file mode, a path (relative to
 > [mode] + ' ' + [path] + b'\x00' + [sha-1]
 
 One example is:
-
+``` bash
 Mode  | SHA-1 | Path
 ------------- | ------------- | -------------
 100644  | 894a44cc066a027465cd26d634948d56d13af9af | .gitignore
@@ -236,7 +236,7 @@ Mode  | SHA-1 | Path
 100644 | 6d208e47659a2a10f5f8640e0155d9276a2130a9 | src
 040000 | e7445b03aea61ec801b20d6ab62f076208b7d097 | tests
 040000 | d5ec863f17f3a2e92aa8f6b66ac18f7b09fd1b38 | main.c
-
+```
 ## Contribution
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.

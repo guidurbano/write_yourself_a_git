@@ -49,7 +49,7 @@ def cat_file(
 @app.command()
 def hash_object(
     t: str = Option(default="blob", metavar="type", help="Specify the object type"),
-    w: str = Option(
+    w: bool = Option(
         default=False, is_flag=True, help="Actually write the object into the database"
     ),
     path: str = Argument(help="Read object from <file>"),
@@ -73,7 +73,7 @@ def log(commit: str = Argument(default="HEAD", help="Commit to start at.")):
 @app.command()
 def ls_tree(
     tree: str = Argument(default="HEAD", help="A tree-ish object."),
-    r: str = Option(default=False, is_flag=True, help="Recurse into sub-trees"),
+    r: bool = Option(default=False, is_flag=True, help="Recurse into sub-trees"),
 ):
     """
     List the contents of a tree object.
@@ -94,8 +94,8 @@ def checkout(
 
 @app.command()
 def show_ref(
-    with_hash: str = Option(
-        default=True, is_flag=True, help="Show hash."
+    with_hash: bool = Option(
+        default=False, is_flag=True, help="Show hash."
     ),
 ):
     """

@@ -196,6 +196,7 @@ def ls_tree(tree, recursive, prefix=""):
     repo = repo_find()
     sha = object_find(repo, tree, fmt=b"tree")
     obj = object_read(repo, sha)
+    print(obj)
 
     for item in obj.items:
         type = item.mode[:2] if len(item.mode) > 4 else item.mode[:1]
