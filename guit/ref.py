@@ -17,7 +17,7 @@ def ref_resolve(repo, ref):
     if not os.path.isfile(path):
         return None
 
-    with open(path, 'r') as fp:
+    with open(path, "r") as fp:
         data = fp.read()[:-1]
         # Drop final \n ^^^^^
     if data.startswith("ref: "):
@@ -43,6 +43,7 @@ def ref_list(repo, path=None):
             ret[f] = ref_resolve(repo, can)
 
     return ret
+
 
 def show_ref(repo=None, refs=None, with_hash=True, prefix=""):
     """

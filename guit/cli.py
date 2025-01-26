@@ -6,7 +6,8 @@ from guit.io import (
     checkout as _checkout,
     hash_object as _hash_object,
     log_commit,
-    ls_tree as _ls_tree
+    ls_tree as _ls_tree,
+    tag as _tag,
 )
 from guit.ref import show_ref as _show_ref
 
@@ -94,11 +95,23 @@ def checkout(
 
 @app.command()
 def show_ref(
-    with_hash: bool = Option(
-        default=False, is_flag=True, help="Show hash."
-    ),
+    with_hash: bool = Option(default=False, is_flag=True, help="Show hash."),
 ):
     """
     List references.
     """
     _show_ref(with_hash=with_hash, prefix="refs")
+
+
+@app.command()
+def tag(
+    a: bool = Option(
+        default=False, is_flag=True, help="Whether to create a tag object."
+    ),
+    name: str = Option(default=None, help="The new tag's name."),
+    object: str = Option(default="HEAD", help="The object the new tag will point to."),
+):
+    """
+    List and create tags.
+    """
+    _tag(annotate=a, name=name, object=object)

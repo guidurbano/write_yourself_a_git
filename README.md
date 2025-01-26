@@ -137,6 +137,20 @@ guit show-refs
 8c31299f8f1a53c4a02c1d88f6980731f308a005 refs/remotes/origin/main
 ```
 
+### 7. Tag
+The tag command let's you create tags as regular refs to commit, tree or
+blob. You can create a new tag or list existing tags:
+
+```
+guit tag
+```
+
+Now to create a tag object (so not only a reference) with  name "first readme" of the README first object
+```
+guit tag --a --name "first readme"  --object d110cf2ee6b39b1224e6919d26aac168533289d7
+```
+
+
 ## To know more
 
 ### Git-objects

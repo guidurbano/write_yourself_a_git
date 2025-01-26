@@ -184,10 +184,10 @@ def kvlm_serialize(kvlm):
         # Skip the message itself
         if k is None:
             continue
-
+        val = kvlm[k]
         # Normalize list
-        vals = [vals] if not isinstance(vals, list) else vals
-        for v in vals:
+        val = [val] if not isinstance(val, list) else val
+        for v in val:
             ret += k + b" " + v.replace(b"\n", b"\n ") + b"\n"
 
     # Append message
@@ -305,3 +305,12 @@ def tree_serialize(obj):
         ret += item.mode + b" " + item.path.encode("utf-8") + b"\x00"
         ret += int(item.sha, 16).to_bytes(20, "big")
     return ret
+
+
+class GitTag(GitCommit):
+    """
+    Tag object (same structure as a commti with PGP signature, author
+    date)
+    """
+
+    fmt = b"tag"
