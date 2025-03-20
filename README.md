@@ -14,9 +14,11 @@ The list of commands are displayed with command `guit --help`.
 ### 1. Creating repositories: init
 
 To initialize a new, empty repository:
+
 ``` bash
 guit init [path]
 ```
+
 This function initializes the repository by creating the necessary
 directories and configuration files:.
 
@@ -65,14 +67,13 @@ guit cat-file blob d110cf2ee6b39b1224e6919d26aac168533289d7
 
 You will see the contents of the first version of README.
 
-
 To write a file, you use:
 
 ```bash
-guit hash-file blob -w README.md
+guit hash-object --t blob -w README.md
 ```
 
-The parameter `-w` is used to actually write the object into the git repository.
+The parameter `--w` is used to actually write the object into the git repository.
 
 ### 3. Log command
 
@@ -114,14 +115,15 @@ guit ls-tree f478a2a96fcfd0c71231f126948d6608ca83591b
 ### 5. Checkout
 
 A very simple checkout method implemented to instantiates a commit in the
-worktree. It instantiate a tree in a directory ONLY if the directory is empty
-(that's ebcause git has several safeguards to avoid deleting data).
+worktree. It instantiates a tree in a directory ONLY if the directory is empty
+(that's because git has several safeguards to avoid deleting data).
 
 ```bash
 guit checkout d0abf88de4d39d2dbf9e6a586f921e405bb1f645 test
 ```
 
 ### 6. Show references
+
 References are text files, in the `.git/refs` which holds  SHA-1
 identifier of an object, or a reference to another reference, ultimately
 to a SHA-1.
@@ -138,18 +140,19 @@ guit show-refs
 ```
 
 ### 7. Tag
+
 The tag command let's you create tags as regular refs to commit, tree or
-blob. You can create a new tag or list existing tags:
+blob. You can create a new tag or list existing tags with the same command:
 
 ```
 guit tag
 ```
 
 Now to create a tag object (so not only a reference) with  name "first readme" of the README first object
+
 ```
 guit tag --a --name "first readme"  --object d110cf2ee6b39b1224e6919d26aac168533289d7
 ```
-
 
 ## To know more
 
@@ -168,7 +171,7 @@ The path where git stores a given object is computed by calculating the SHA-1 ha
 
 The mathematical computation is done by a hash function, which is a kind of unidirectional mathematical function: it is easy to compute the hash of a value, but there’s no way to compute back which value produced a hash.
 
-Git renders the hash as a lowercase hexadecimal string, and splits it in two parts: the first two characters, and the rest. It uses the first part as a directory name, the rest as the file name:
+Git renders the hash as a lowercase hexadecimal string, and splits it in two parts: the first two characters (used as directory name), and the rest (file name):
 
 The object with SHA-1 equals to `d110cf2ee6b39b1224e6919d26aac168533289d7` is store in `.git/objects/d1/10cf2ee6b39b1224e6919d26aac168533289d7`.
 
@@ -186,7 +189,6 @@ Writing an object is reading it in reverse: we compute the hash of the object af
 inserting the header, zlib compress everything and write to the location.
 
 #### what is a commit?
-
 
 A commit object uncompressed without headers has this format:
 
@@ -239,6 +241,7 @@ It’s an array of three-element tuples made of a file mode, a path (relative to
 > [mode] + ' ' + [path] + b'\x00' + [sha-1]
 
 One example is:
+
 ``` bash
 Mode  | SHA-1 | Path
 ------------- | ------------- | -------------
@@ -251,6 +254,20 @@ Mode  | SHA-1 | Path
 040000 | e7445b03aea61ec801b20d6ab62f076208b7d097 | tests
 040000 | d5ec863f17f3a2e92aa8f6b66ac18f7b09fd1b38 | main.c
 ```
+
 ## Contribution
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
+
+### Branches
+
+**A branch is a reference to a commit**. Wait, but what's the difference
+of a branch and a tag?
+
+There are, of course, differences between a branch and a tag:
+
+- Branches are references to a commit (tags can refer to any object);
+- The branch `ref` is updated at each commit.
+
+The current branch is a ref file outise of the `refs`folder, in `.git/HEAD`,
+which is an indirect reference.
