@@ -8,6 +8,7 @@ from guit.io import (
     log_commit,
     ls_tree as _ls_tree,
     tag as _tag,
+    rev_parse as _rev_parse,
 )
 from guit.ref import show_ref as _show_ref
 
@@ -94,7 +95,7 @@ def checkout(
 
 
 @app.command()
-def show_ref(
+def show_refs(
     with_hash: bool = Option(default=False, is_flag=True, help="Show hash."),
 ):
     """
@@ -115,3 +116,20 @@ def tag(
     List and create tags.
     """
     _tag(annotate=a, name=name, object=object)
+
+
+@app.command()
+def rev_parse(
+    guit_type: str = Option(
+        default=None, metavar="type", help="Specify the expected type."
+    ),
+    name: str = Argument(help="The name to parse."),
+
+):
+    """
+    Parse revision (or other objects) identifiers.
+    """
+    if guit_type not in ["blob", "commit", "tag", "tree"]:
+        raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
+
+    _rev_parse(guit_type=guit_type, name=name)
