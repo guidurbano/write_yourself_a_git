@@ -1,5 +1,4 @@
 import os
-
 from guit.classes import GitRepository
 
 
@@ -82,11 +81,3 @@ def repo_find(path: str = ".", required: bool = True) -> GitRepository | None:
 
     # Recursively search in the parent directory
     return repo_find(parent, required)
-
-
-def object_find(repo, name, fmt=None, follow=True):
-    """
-    Object find.
-    Placeholder for now.
-    """
-    return name
