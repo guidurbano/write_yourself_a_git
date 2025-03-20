@@ -124,7 +124,6 @@ def rev_parse(
         default=None, metavar="type", help="Specify the expected type."
     ),
     name: str = Argument(help="The name to parse."),
-
 ):
     """
     Parse revision (or other objects) identifiers.

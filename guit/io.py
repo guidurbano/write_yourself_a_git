@@ -364,11 +364,11 @@ def object_resolve(repo, name):
 
     # Try for references.
     as_tag = ref_resolve(repo, "refs/tags/" + name)
-    if as_tag: # Did we find a tag?
+    if as_tag:  # Did we find a tag?
         candidates.append(as_tag)
 
     as_branch = ref_resolve(repo, "refs/heads/" + name)
-    if as_branch: # Did we find a branch?
+    if as_branch:  # Did we find a branch?
         candidates.append(as_branch)
 
     return candidates
@@ -389,7 +389,9 @@ def object_find(repo, name, fmt=None, follow=True):
         raise Exception(f"No such reference {name}.")
 
     if len(sha) > 1:
-        raise Exception("Ambiguous reference {name}: Candidates are:\n - {'\n - '.join(sha)}.")
+        raise Exception(
+            "Ambiguous reference {name}: Candidates are:\n - {'\n - '.join(sha)}."
+        )
 
     sha = sha[0]
 
@@ -410,12 +412,13 @@ def object_find(repo, name, fmt=None, follow=True):
             return None
 
         # Follow tags
-        if obj.fmt == b'tag':
-            sha = obj.kvlm[b'object'].decode("ascii")
-        elif obj.fmt == b'commit' and fmt == b'tree':
-            sha = obj.kvlm[b'tree'].decode("ascii")
+        if obj.fmt == b"tag":
+            sha = obj.kvlm[b"object"].decode("ascii")
+        elif obj.fmt == b"commit" and fmt == b"tree":
+            sha = obj.kvlm[b"tree"].decode("ascii")
         else:
             return None
+
 
 def rev_parse(guit_type, name):
     """
