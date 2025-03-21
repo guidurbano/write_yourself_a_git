@@ -321,69 +321,84 @@ def tag_create(repo, name, object, annotate=False):
 
 
 def ref_create(repo, ref_name, sha):
+    """
+    Create or update a reference in the repository.
+
+    This function writes a SHA-1 hash to a reference file inside the Git repository.
+
+    Parameters:
+        repo: The repository object.
+        ref_name (str): The reference name (e.g., "refs/heads/main").
+        sha (str): The SHA-1 hash to store in the reference.
+    """
     with open(repo_file(repo, "refs/" + ref_name), "w") as fp:
         fp.write(sha + "\n")
 
 
 def object_resolve(repo, name):
     """
-    Object resolve.
+    Resolve a given reference name to one or more SHA-1 hashes.
 
-    If name is HEAD, will resolve .git/HEAD
-    If name is a full hash, this hash is returned unmodified
-    If name is a "short hash", it will collect objects with that start
-    If name is tag or branch, resolve them
+    The function follows these rules:
+      - If name is "HEAD", it resolves `.git/HEAD`.
+      - If name is a full SHA-1 hash, it returns the hash unmodified.
+      - If name is a short SHA-1 hash, it searches for matching objects.
+      - If name is a tag or branch, it resolves to the associated commit.
+
+    Parameters:
+        repo: The repository object.
+        name (str): The name or SHA-1 hash to resolve.
     """
 
     candidates = list()
     hashRE = re.compile(r"^[0-9A-Fa-f]{4,40}$")
 
-    # Empty string
     if not name:
         return None
 
-    # Head is nonambiguous
+    # Resolve HEAD
     if name == "HEAD":
         return [ref_resolve(repo, "HEAD")]
 
-    # If it's a hex string, try for a hash.
+    # Check if it's a SHA-1 hash (full or short)
     if hashRE.match(name):
-        # This may be a hash, either small or full.  4 seems to be the
-        # minimal length for git to consider something a short hash.
-        # This limit is documented in man git-rev-parse
         name = name.lower()
-        prefix = name[0:2]
+        prefix = name[:2]
         path = repo_dir(repo, "objects", prefix, mkdir=False)
         if path:
             rem = name[2:]
             for f in os.listdir(path):
                 if f.startswith(rem):
-                    # Notice a string startswith() itself, so this
-                    # works for full hashes.
                     candidates.append(prefix + f)
 
-    # Try for references.
-    as_tag = ref_resolve(repo, "refs/tags/" + name)
-    if as_tag:  # Did we find a tag?
-        candidates.append(as_tag)
+    # Try resolving as a branch
+    tag_sha = ref_resolve(repo, f"refs/tags/{name}")
+    if tag_sha:
+        candidates.append(tag_sha)
 
-    as_branch = ref_resolve(repo, "refs/heads/" + name)
-    if as_branch:  # Did we find a branch?
-        candidates.append(as_branch)
+    # Try resolving as a branch
+    branch_sha = ref_resolve(repo, f"refs/heads/{name}")
+    if branch_sha:
+        candidates.append(branch_sha)
 
     return candidates
 
 
 def object_find(repo, name, fmt=None, follow=True):
     """
-    Object find.
+    Locate and return the SHA-1 of an object.
 
-    If name is HEAD, will resolve .git/HEAD
-    If name is a full hash, this hash is returned unmodified
-    If name is a "short hash", it will collect objects with that start
-    If name is tag or branch, resolve them
+    This function attempts to find an object using a name reference.
+    If a specific format (type) is provided, it follows commits or tags to find the desired object.
+
+    Parameters:
+        repo: The repository object.
+        name (str): The name of the object (e.g., branch, tag, or SHA-1).
+        fmt (bytes, optional): The expected object format (e.g., b"tree", b"commit").
+        follow (bool, optional): Whether to follow references (e.g., from tags to commits).
     """
-    sha = object_resolve(repo, name)
+
+    sha_list = object_resolve(repo, name)
 
     if not sha:
         raise Exception(f"No such reference {name}.")
@@ -393,17 +408,13 @@ def object_find(repo, name, fmt=None, follow=True):
             "Ambiguous reference {name}: Candidates are:\n - {'\n - '.join(sha)}."
         )
 
-    sha = sha[0]
+    sha = sha_list[0]
 
     if not fmt:
         return sha
 
     while True:
         obj = object_read(repo, sha)
-        #     ^^^^^^^^^^^ < this is a bit agressive: we're reading
-        # the full object just to get its type.  And we're doing
-        # that in a loop, albeit normally short.  Don't expect
-        # high performance here.
 
         if obj.fmt == fmt:
             return sha
@@ -411,7 +422,7 @@ def object_find(repo, name, fmt=None, follow=True):
         if not follow:
             return None
 
-        # Follow tags
+        # Follow tags to commits
         if obj.fmt == b"tag":
             sha = obj.kvlm[b"object"].decode("ascii")
         elif obj.fmt == b"commit" and fmt == b"tree":
@@ -422,11 +433,14 @@ def object_find(repo, name, fmt=None, follow=True):
 
 def rev_parse(guit_type, name):
     """
-    Solving references through parsing them
+    Parse a reference and resolve it to a specific object type if required.
+
+    This function finds an object by name and optionally ensures it matches a given type.
+
+    Parameters:
+        guit_type (str or None): The expected object type (e.g., "commit", "tree"). If None, any type is accepted.
+        name (str): The reference name or SHA-1 hash.
     """
-    if guit_type:
-        fmt = guit_type.encode()
-    else:
-        fmt = None
+    fmt = guit_type.encode() if guit_type else None
     repo = repo_find()
     print(object_find(repo, name, fmt, follow=True))
