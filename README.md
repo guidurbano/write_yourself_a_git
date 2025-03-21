@@ -154,6 +154,15 @@ Now to create a tag object (so not only a reference) with  name "first readme" o
 guit tag --a --name "first readme"  --object d110cf2ee6b39b1224e6919d26aac168533289d7
 ```
 
+### 8. Rev parse
+
+This command is used to solve references (parse revisions).
+For example you can parse `HEAD`:
+
+```
+guit rev-parse --guit-type commit HEAD
+```
+
 ## To know more
 
 ### Git-objects
@@ -255,10 +264,6 @@ Mode  | SHA-1 | Path
 040000 | d5ec863f17f3a2e92aa8f6b66ac18f7b09fd1b38 | main.c
 ```
 
-## Contribution
-
-Contributions are welcome! Feel free to fork the repository and submit a pull request.
-
 ### Branches
 
 **A branch is a reference to a commit**. Wait, but what's the difference
@@ -271,3 +276,13 @@ There are, of course, differences between a branch and a tag:
 
 The current branch is a ref file outise of the `refs`folder, in `.git/HEAD`,
 which is an indirect reference.
+
+### Staging area
+
+"Staging area" is actually an abstraction of Git, since it's all based index file mechanism. The index is a binary file (.git/index) that tracks file metadata and staged content.
+
+Index file uses a structured format with file paths, SHA-1 hashes, and mode bits.
+
+## Contribution
+
+Contributions are welcome! Feel free to fork the repository and submit a pull request.

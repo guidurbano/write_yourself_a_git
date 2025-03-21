@@ -9,6 +9,7 @@ from guit.io import (
     ls_tree as _ls_tree,
     tag as _tag,
     rev_parse as _rev_parse,
+    ls_files as _ls_files,
 )
 from guit.ref import show_ref as _show_ref
 
@@ -132,3 +133,11 @@ def rev_parse(
         raise Exception(f"type should be either 'blob', 'commit', 'tag', 'tree'")
 
     _rev_parse(guit_type=guit_type, name=name)
+
+
+@app.command()  # TODO: continue ls_files (chapter 8)
+def ls_files(verbose: str = Option(default=None, help="List all the stage files.")):
+    """
+    List files in stage area.
+    """
+    _ls_files(verbose)
